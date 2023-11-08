@@ -1,17 +1,21 @@
-import React from "react";
 import "./App.css";
 import { useState, useCallback } from "react";
 import Lists from "./component/Lists";
 import Form from "./component/Form";
 
-export default function App() {
-  const [todoData, setTodoData] = useState([]);
+// const initialTodoData = localStorage.getItem("todoData")
+//   ? JSON.parse(localStorage.getItem("todoData"))
+//   : []; //로컬스토리지에서 todo데이터를 가져오면 JSON.parse로 가져오고 없으면 빈배열반환.
+
+function App() {
+  const [todoData, setTodoData] = useState([]); //initialTodoData
   const [value, setValue] = useState("");
 
   const handleClick = useCallback(
     (_id) => {
       let newTodoData = todoData.filter((_data) => _data.id !== _id);
       setTodoData(newTodoData); //todoData값을 state를 이용해 newTodoData로 변경! (재호출 렌더링)
+      localStorage.setItem("todoData", JSON.stringify(newTodoData)); //localStorage
     },
     [todoData]
   );
@@ -26,11 +30,16 @@ export default function App() {
     };
 
     setTodoData((prev) => [...prev, newTodoData]);
+    localStorage.setItem(
+      "todoData",
+      JSON.stringify([...todoData, newTodoData])
+    );
     setValue(""); //
   };
 
   const handleRemoveClick = () => {
     setTodoData([]);
+    localStorage.setItem("todoData", JSON.stringify([]));
   }; //setTodoData를 빈배열로 만들기! (모든 목록 빈배열!-> 전체삭제)
 
   return (
@@ -51,3 +60,5 @@ export default function App() {
     </div>
   );
 }
+
+export default App;
